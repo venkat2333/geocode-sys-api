@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	
+	<flow name="getGeoCode" doc:id="bbd7bf8f-386c-49f0-87b6-69820a8830fd" >
+		<logger level="DEBUG" doc:name="Logs the Beginning" doc:id="7e76a2b5-5b15-45df-aa22-e9d624a6e956" message="Ip address received: #[attributes.queryParams.ipaddress]"/>
+		<set-variable value="#[attributes.queryParams.ipaddress]" doc:name="Store IP address" doc:id="33c22db9-a66d-41f7-bb7e-cc0c4c84f2f4" variableName="ipaddress"/>
+		<logger level="INFO" doc:name="Logger" doc:id="93b0ef55-d48e-40cf-af13-66e86213f2ec" message="Sending request to get details for ip address #[vars.ipaddress]"/>
+		<http:request method="GET" doc:name="Http Call to Geocode api" doc:id="f34bf962-6e3a-4335-89a8-1f3778ddf595" config-ref="HTTPGeocode_Request" path="/${http.path}/{ipaddress}">
+			<http:uri-params ><![CDATA[#[output application/java
+---
+{
+	"ipaddress" : vars.ipaddress
+}]]]></http:uri-params>
+		</http:request>
+		<ee:transform doc:name="Transform Message" doc:id="32cbc17e-62bd-4e03-b480-a77456af7e40" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logs response" doc:id="49f329e5-9a6b-403e-8d14-7e5c9214e649" message="Response from geocode API for IP address #[vars.ipaddress] #[payload]"/>
+	</flow>
+</mule>

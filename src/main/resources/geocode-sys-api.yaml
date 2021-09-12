@@ -1,0 +1,10 @@
+api: 
+  id: ""
+  name: "geocode-sys-api"
+  version: "v1"
+  path: "/api/system/geocode/v1"
+ 
+http: 
+  port: "8081"
+  host: "ip-api.com"
+  path: "json"
