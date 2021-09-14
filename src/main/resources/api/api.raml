@@ -1,0 +1,40 @@
+#%RAML 1.0
+title: geocode-sys-api
+version: 1.0
+description: Geocode system API retrieves the postal code based on the ip address
+
+traits:
+  client-id-required:
+    headers:
+      client_id:
+        type: string
+      client_secret:
+        type: string
+
+/postalcode:
+ get:
+  is: [client-id-required]
+  queryParameters:
+   ipaddress:
+    type: string
+    required: true
+    pattern: '^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$'
+  responses:
+   200:
+    body:
+     application/json:
+      example: !include geoCodeResponse.raml
+   400:
+    body:
+     application/json: 
+      example:
+       {"message" : "Bad Request"}
+   401:
+    body:
+     application/json: 
+   500:
+    body:
+     application/json:
+      example:
+        {"message" : "Internal Server Error"}
+  
